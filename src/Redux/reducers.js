@@ -1,9 +1,12 @@
-import { SELECT_ROLE, SELECT_DESIG, ROLE_STATUS } from "./constants";
+import {
+  SELECT_ROLE, SELECT_DESIG, ROLE_STATUS, SELECT_DEPT
+} from "./constants";
 
 const myState = {
   role: "",
   designation: "",
-  roleStatus: false
+  roleStatus: false,
+  department: ""
 };
 
 // eslint-disable-next-line default-param-last
@@ -25,6 +28,12 @@ const signingUp = (state = myState, action) => {
     return {
       ...state,
       roleStatus: action.payload
+    };
+
+  case SELECT_DEPT:
+    return {
+      ...state,
+      department: action.payload
     };
 
   default:

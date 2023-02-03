@@ -75,7 +75,7 @@
 			}
 		],
 		"jsx-a11y/label-has-for": [
-			"error",
+			"off",
 			{
 				"required": {
 					"some": [
