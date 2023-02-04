@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
+import { Link } from "react-router-dom";
 import InputComponent from "../helpers/InputComponent";
+import SelectComp from "../helpers/SelectComp";
+import registrationStyles from "../Styles/RegistrationStyles";
 
 const initialState = {
   fullName: "",
   email: "",
   empId: "",
-  //   officeLoc: "",
-  //   department: "",
+  officeLoc: "",
+  department: "",
   password: "",
   confrmPswrd: ""
 };
 
 function Registration() {
+  const classes = registrationStyles();
   const [formData, setFormData] = useState(initialState);
   const [formErrors, setFormErrors] = useState({});
   const [isSubmit, setIsSubmit] = useState(false);
@@ -22,11 +26,12 @@ function Registration() {
     fullName: "^[A-Za-z]{3,16}$",
     email: "yogesh@celestialsys.com",
     empId: "^[0-9][0-9][0-9]$",
-    officeLoc: "^[A-Za-z]{3,16}$",
-    department: "^[A-Za-z]{3,16}$",
     password: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*)(?!.* ).{6,15}$",
     confrmPswrd: formData.password
   };
+
+  const officeLocArr = ["Noida", "WTC", "Jayanagar"];
+  const departmentArr = ["FE", "BE", "QA", "DevOps", "HR", "Operation", "IT"];
 
   const Validate = (values) => {
     const errors = {};
@@ -53,6 +58,14 @@ function Registration() {
 
     case (!(values.empId).match(patterns.empId)):
       errors.empId = "Employee Id should be a 3-digit number only";
+      break;
+
+    case (values.officeLoc === ""):
+      errors.officeLoc = "Office location is required";
+      break;
+
+    case (values.department === ""):
+      errors.department = "Department id is required";
       break;
 
     case (values.password === ""):
@@ -104,27 +117,34 @@ function Registration() {
   };
 
   return (
-    <div>
+    <div className={classes.signUpComp}>
+      <p className={classes.heading}>Sign Up</p>
+      <hr />
       <form onSubmit={(e) => handleFormSubmit(e)}>
-        <br />
-        <br />
         <InputComponent type="text" label="Full Name" name="fullName" value={formData.fullName} formErrors={formErrors?.fullName} handler={(e) => handler(e)} />
-        <br />
         <br />
         <InputComponent type="text" label="Email" name="email" value={formData.email} formErrors={formErrors?.email} handler={(e) => handler(e)} />
         <br />
-        <br />
         <InputComponent type="text" label="Employee Id" name="empId" value={formData.empId} formErrors={formErrors?.empId} handler={(e) => handler(e)} />
         <br />
+        <SelectComp label="Office location" name="officeLoc" value={formData.officeLoc} formErrors={formErrors?.officeLoc} handler={(e) => handler(e)} options={officeLocArr} />
+        <br />
+        <SelectComp label="Department" name="department" value={formData.department} formErrors={formErrors?.department} handler={(e) => handler(e)} options={departmentArr} />
         <br />
         <InputComponent type="password" label="Password" name="password" value={formData.password} formErrors={formErrors?.password} handler={(e) => handler(e)} />
         <br />
-        <br />
         <InputComponent type="password" label="Repeat Password" name="confrmPswrd" value={formData.confrmPswrd} formErrors={formErrors?.confrmPswrd} handler={(e) => handler(e)} />
         <br />
-        <br />
-        <Button type="submit" variant="contained">Signup</Button>
+        <div className={classes.buttonsContainer}>
+          <Button variant="outlined">Cancel</Button>
+          <Button type="submit" variant="contained">Signup</Button>
+        </div>
       </form>
+      <p>
+        Already registered,
+        {" "}
+        <Link to="/">Login Here</Link>
+      </p>
     </div>
   );
 }

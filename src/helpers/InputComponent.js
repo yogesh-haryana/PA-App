@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField } from "@mui/material";
+import { TextField, FormHelperText } from "@mui/material";
 import PropTypes from "prop-types";
 
 function InputComponent(props) {
@@ -12,15 +12,17 @@ function InputComponent(props) {
     type
   } = props;
   return (
-    <TextField
-      value={value}
-      name={name}
-      label={label}
-      type={type}
-      onChange={handler}
-      variant="outlined"
-      helperText={formErrors}
-    />
+    <div>
+      <TextField
+        value={value}
+        name={name}
+        label={label}
+        type={type}
+        onChange={handler}
+        variant="outlined"
+      />
+      <FormHelperText>{formErrors}</FormHelperText>
+    </div>
 
   );
 }
