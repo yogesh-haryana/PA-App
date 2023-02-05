@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import rootReducers from "./Redux/rootReducer";
 import Registration from "./components/Registration";
 import LoginForm from "./components/LoginForm";
+import Admin from "./components/Admin";
 
 function App() {
   const store = createStore(rootReducers);
@@ -14,6 +15,7 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<LoginForm />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="/register" element={<Registration />} />
           </Routes>
         </Router>

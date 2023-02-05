@@ -126,7 +126,7 @@ function Registration() {
   };
 
   const postFormData = async () => {
-    const url = "http://localhost:8080/api/login/";
+    const url = "http://localhost:8080/api/users/";
     const method = "POST";
     const data = formData;
     const response = await request(url, method, data);
