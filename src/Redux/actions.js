@@ -1,23 +1,17 @@
 import {
-  SELECT_ROLE, SELECT_DESIG, ROLE_STATUS, SELECT_DEPT
+  LOADING, LOGIN_SUCCESS, LOGIN_FAILED
 } from "./constants";
 
-export const selectRole = (payload) => ({
-  type: SELECT_ROLE,
+export const loadingData = () => ({
+  type: LOADING
+});
+
+export const lodingSuccess = (payload) => ({
+  type: LOGIN_SUCCESS,
   payload
 });
 
-export const selectDesig = (payload) => ({
-  type: SELECT_DESIG,
-  payload
-});
-
-export const setRoleStatus = (payload) => ({
-  type: ROLE_STATUS,
-  payload
-});
-
-export const selectDepartment = (payload) => ({
-  type: SELECT_DEPT,
+export const lodingFailed = (payload) => ({
+  type: LOGIN_FAILED,
   payload
 });

@@ -1,39 +1,35 @@
 import {
-  SELECT_ROLE, SELECT_DESIG, ROLE_STATUS, SELECT_DEPT
+  LOADING, LOGIN_SUCCESS, LOGIN_FAILED
 } from "./constants";
 
 const myState = {
-  role: "",
-  designation: "",
-  roleStatus: false,
-  department: ""
+  loading: false,
+  userData: {},
+  error: ""
 };
 
 // eslint-disable-next-line default-param-last
-const signingUp = (state = myState, action) => {
+const authentication = (state = myState, action) => {
   switch (action.type) {
-  case SELECT_ROLE:
+  case LOADING:
     return {
       ...state,
-      role: action.payload
+      loading: true
     };
 
-  case SELECT_DESIG:
+  case LOGIN_SUCCESS:
     return {
       ...state,
-      designation: action.payload
+      loading: true,
+      userData: action.payload
     };
 
-  case ROLE_STATUS:
+  case LOGIN_FAILED:
     return {
       ...state,
-      roleStatus: action.payload
-    };
-
-  case SELECT_DEPT:
-    return {
-      ...state,
-      department: action.payload
+      loading: false,
+      userData: {},
+      error: action.payload
     };
 
   default:
@@ -41,4 +37,4 @@ const signingUp = (state = myState, action) => {
   }
 };
 
-export default signingUp;
+export default authentication;
