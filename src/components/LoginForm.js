@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import axios from "axios";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
 import InputComponent from "../helpers/InputComponent";
 import loginStyles from "../Styles/loginStyles";
 import { loadingData, lodingSuccess, lodingFailed } from "../Redux/actions";
@@ -16,7 +17,14 @@ function LoginForm() {
   const [loginData, setLoginData] = useState(initialState);
   const [inputErrors, setInputErrs] = useState({});
   const dispatch = useDispatch();
-  //   const userData = useSelector((state) => (state.authentication).userData);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem("user")) {
+      navigate("/dashboard");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handler = (e) => {
     const { name, value } = e.target;
@@ -56,6 +64,7 @@ function LoginForm() {
         if (users.length === 1) {
           const LoggedInUser = users[0];
           dispatch(lodingSuccess(LoggedInUser));
+          localStorage.setItem("user", JSON.stringify(LoggedInUser));
           setLoginData(initialState);
         }
       })
@@ -67,6 +76,8 @@ function LoginForm() {
   const onLogin = (e) => {
     if (validateLogin(loginData) === true) {
       authLogin();
+      // saveDataToLC(userData);
+      navigate("/dashboard");
     }
     e.preventDefault();
   };
