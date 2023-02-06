@@ -1,19 +1,24 @@
 import { makeStyles } from "@mui/styles";
 
 const useStyles = makeStyles({
-  imgContainer: {
-    height: "30%"
-
+  mainContainer: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-between"
   },
-  profile: {
-    height: "150px",
-    width: "150px",
-    borderRaduis: "45%"
+  dataContainer: {
+    width: "40%",
+    marginTop: "20px",
+    marginBottom: "20px"
+
   },
   allDetails: {
     height: "70%",
-    textAlign: "left",
+    // textAlign: "left",
     padding: "10px"
+  },
+  buttonsContainer: {
+    marginTop: "40px"
   }
 });
 

@@ -12,6 +12,7 @@ const initialErrs = {
   role: "",
   designation: ""
 };
+
 function Admin() {
   const classes = useStyles();
   const [fetchedData, setFetchedData] = useState([]);
@@ -20,13 +21,32 @@ function Admin() {
   const rolesArr = ["Management", "Manager", "Engineer"];
   const desigArr = ["Project Lead", "Sr Software Engineer", "Software Engineer", "Software Trainee"];
 
-  const handler = (e, index) => {
-    console.log(index);
+  const handler = (e) => {
     const { name, value } = e.target;
     setSelectData({ ...selectData, [name]: value });
     if (value) {
       setFormErrors({ ...formErrors, [name]: "" });
     }
+  };
+
+  const Validate = (values) => {
+    const errors = {};
+    let validationStatus = true;
+    switch (true) {
+    case (values.role === ""):
+      errors.role = "Role is required";
+      validationStatus = false;
+      break;
+    case (values.role === "Engineer" && values.designation === ""):
+      errors.role = "Designation is required";
+      validationStatus = false;
+      break;
+
+    default:
+      break;
+    }
+    setFormErrors(errors);
+    return validationStatus;
   };
 
   const fatchDataToVerify = async () => {
@@ -46,27 +66,30 @@ function Admin() {
   };
 
   const verifyAndDeleteProfile = async (ind) => {
-    const targetElement = fetchedData[ind];
-    const {
-      fullName, email, empId, officeLoc, department, password
-    } = targetElement;
-    const dataToBePost = {
-      fullName,
-      email,
-      empId,
-      officeLoc,
-      department,
-      password,
-      role: selectData.role,
-      designation: selectData?.designation
-    };
-    await fetch("http://localhost:8080/api/users/verified", {
-      method: "post",
-      body: JSON.stringify(dataToBePost),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
+    if (Validate(selectData) === true) {
+      const targetElement = fetchedData[ind];
+      const {
+        fullName, email, empId, officeLoc, department, password
+      } = targetElement;
+      const dataToBePost = {
+        fullName,
+        email,
+        empId,
+        officeLoc,
+        department,
+        password,
+        role: selectData.role,
+        designation: selectData?.designation
+      };
+      await fetch("http://localhost:8080/api/users/verified", {
+        method: "post",
+        body: JSON.stringify(dataToBePost),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      deleteProfile(ind);
+    }
   };
 
   return (
@@ -106,13 +129,13 @@ function Admin() {
             <div>
               Role -
               {" "}
-              <SelectComp label="role" name="role" value={selectData.role} formErrors={formErrors?.role} handler={(e) => handler(e, index)} options={rolesArr} />
+              <SelectComp label="role" name="role" value={selectData.role} formErrors={formErrors?.role} handler={handler} options={rolesArr} />
             </div>
             {selectData.role === "Engineer" && (
               <div>
                 designation -
                 {" "}
-                <SelectComp label="designation" name="designation" value={selectData.designation} formErrors={formErrors?.designation} handler={(e) => handler(e, index)} options={desigArr} />
+                <SelectComp label="designation" name="designation" value={selectData.designation} formErrors={formErrors?.designation} handler={handler} options={desigArr} />
               </div>
             )}
           </div>
