@@ -26,7 +26,6 @@ function Registration() {
 
   const patterns = {
     fullName: "^[A-Za-z]{3,16}$",
-    // eslint-disable-next-line no-useless-escape
     email: "^[a-zA-Z0-9_.+-]+@celestialsys.com$",
     empId: "^[0-9][0-9][0-9]$",
     password: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*)(?!.* ).{6,15}$",
@@ -104,10 +103,6 @@ function Registration() {
       break;
     }
     setFormErrors(errors);
-    // const formErrArr = Object.keys(formErrors);
-    // if (formErrArr.length !== 0) {
-    //   setErrExist(true);
-    // }
     return validationStatus;
   };
 

@@ -20,8 +20,6 @@ function SideBarComp(props) {
 SideBarComp.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   menuItemsForSideBar: PropTypes.array.isRequired
-  // eslint-disable-next-line react/forbid-prop-types
-  // user: PropTypes.object.isRequired
 };
 
 export default SideBarComp;
