@@ -14,6 +14,7 @@ import PropTypes from "prop-types";
 const selfSettings = ["Account", "Logout"];
 
 function NavBar(props) {
+  // eslint-disable-next-line no-unused-vars
   const { name, logOutUser } = props;
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -44,7 +45,7 @@ function NavBar(props) {
               textDecoration: "none"
             }}
           >
-            {name}
+            PERFORMANCE APPRAISAL
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }} />
 
