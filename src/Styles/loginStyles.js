@@ -20,6 +20,18 @@ const loginStyles = makeStyles({
         width: "100%"
       }
     }
+  },
+  heading: {
+    fontSize: "22px",
+    fontWeight: "600",
+    marginTop: "50px",
+    letterSpacing: "1.5px"
+  },
+  adminLoginBtn: {
+    width: "100px",
+    position: "absolute",
+    top: "40px",
+    right: "60px"
   }
 });
 

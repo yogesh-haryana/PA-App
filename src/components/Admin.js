@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router";
 import useStyles from "../Styles/AdminStyles";
 import SelectComp from "../helpers/SelectComp";
 
@@ -15,6 +17,7 @@ const initialErrs = {
 
 function Admin() {
   const classes = useStyles();
+  const navigate = useNavigate();
   const [fetchedData, setFetchedData] = useState([]);
   const [selectData, setSelectData] = useState(initialState);
   const [formErrors, setFormErrors] = useState(initialErrs);
@@ -56,7 +59,11 @@ function Admin() {
   };
 
   useEffect(() => {
+    if (!localStorage.getItem("admin")) {
+      navigate("/adminLogin");
+    }
     fatchDataToVerify();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const deleteProfile = async (ind) => {
@@ -92,8 +99,14 @@ function Admin() {
     }
   };
 
+  const logoutAdmin = () => {
+    localStorage.removeItem("admin");
+    navigate("/adminLogin");
+  };
+
   return (
     <div>
+      <Button className={classes.logoutBtn} type="button" variant="outlined" onClick={logoutAdmin}>logout</Button>
       {fetchedData.map((item, index) => (
         // eslint-disable-next-line no-underscore-dangle
         <div key={item._id}>

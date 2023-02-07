@@ -1,28 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import axios from "axios";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
-import { Link } from "react-router-dom";
 import InputComponent from "../helpers/InputComponent";
 import loginStyles from "../Styles/loginStyles";
-import { loadingData, lodingSuccess, lodingFailed } from "../Redux/actions";
 
 const initialState = {
   username: "",
   password: ""
 };
 
-function LoginForm() {
+function AdminLogin() {
   const classes = loginStyles();
   const [loginData, setLoginData] = useState(initialState);
   const [inputErrors, setInputErrs] = useState({});
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (localStorage.getItem("user")) {
-      navigate("/dashboard");
+    if (localStorage.getItem("admin")) {
+      navigate("/admin");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -39,13 +34,13 @@ function LoginForm() {
     let validationStatus = true;
     const errors = {};
     switch (true) {
-    case (values.username === ""):
-      errors.username = "Username is required, Your registered email is your username";
+    case (values.username === "" && values.username !== "admin"):
+      errors.username = "Please enter correct username.";
       validationStatus = false;
       break;
 
-    case (values.password === ""):
-      errors.password = "Please enter password";
+    case (values.password === "" && values.password !== "admin00"):
+      errors.password = "Please enter correct password";
       validationStatus = false;
       break;
 
@@ -56,35 +51,16 @@ function LoginForm() {
     return validationStatus;
   };
 
-  const authLogin = () => {
-    const url = `http://localhost:8080/api/users/verified?username=${loginData.username}&password=${loginData.password}`;
-    dispatch(loadingData());
-    axios.get(url)
-      .then((resp) => {
-        const users = resp.data;
-        if (users.length === 1) {
-          const LoggedInUser = users[0];
-          dispatch(lodingSuccess(LoggedInUser));
-          localStorage.setItem("user", JSON.stringify(LoggedInUser));
-          setLoginData(initialState);
-          navigate("/dashboard");
-        }
-      })
-      .catch((error) => {
-        dispatch(lodingFailed(error.message));
-      });
-  };
-
   const onLogin = (e) => {
     if (validateLogin(loginData) === true) {
-      authLogin();
+      localStorage.setItem("admin", JSON.stringify(loginData));
+      navigate("/admin");
     }
     e.preventDefault();
   };
   return (
     <div className={classes.loginForm}>
-      <Link type="button" className={classes.adminLoginBtn} to="/adminLogin">Admin Login</Link>
-      <p className={classes.heading}>PERFORMANCE APPRAISAL</p>
+      <p className={classes.heading}>Welcome Back, ADMIN</p>
       <form onSubmit={onLogin}>
         <InputComponent type="text" label="Username" name="username" value={loginData.username} formErrors={inputErrors?.username} handler={(e) => handler(e)} />
         <br />
@@ -92,13 +68,8 @@ function LoginForm() {
         <br />
         <Button type="submit" variant="contained">Login</Button>
       </form>
-      <p>
-        Not registered with us..
-        {" "}
-        <Link to="/register">Signup here</Link>
-      </p>
     </div>
   );
 }
 
-export default LoginForm;
+export default AdminLogin;
