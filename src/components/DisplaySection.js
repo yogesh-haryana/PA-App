@@ -8,6 +8,7 @@ function DisplaySection(props) {
   const menuItemsForManagement = ["Employee List", "KRA List", "Goal List", "Performance Report", "Settings"];
   const menuItemsForEngineers = ["Performance Report", "Appraisal Form"];
   const menuItemsForManager = ["Performance Report", "Appraisal Rating"];
+
   const { user } = props;
   const { role } = user;
 

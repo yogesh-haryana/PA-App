@@ -18,12 +18,10 @@ function LoginForm() {
   const [inputErrors, setInputErrs] = useState({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
-  const { fullName, role } = user;
 
   useEffect(() => {
     if (localStorage.getItem("user")) {
-      navigate(`/dashboard/${role}/${fullName}`);
+      navigate("/dashboard");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -68,7 +66,7 @@ function LoginForm() {
           dispatch(lodingSuccess(LoggedInUser));
           localStorage.setItem("user", JSON.stringify(LoggedInUser));
           setLoginData(initialState);
-          navigate(`/dashboard/${role}/${fullName}`);
+          navigate("/dashboard");
         }
       })
       .catch((error) => {
