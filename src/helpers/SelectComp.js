@@ -38,11 +38,12 @@ SelectComp.propTypes = {
   formErrors: PropTypes.string,
   value: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   // eslint-disable-next-line react/forbid-prop-types
   options: PropTypes.array.isRequired
 };
 SelectComp.defaultProps = {
-  formErrors: ""
+  formErrors: "",
+  label: ""
 };
 export default SelectComp;

@@ -16,6 +16,8 @@ const initialState = {
   confrmPswrd: ""
 };
 
+export const departmentArr = ["FE", "BE", "QA", "DevOps", "HR", "Operation", "IT"];
+
 function Registration() {
   const classes = registrationStyles();
   const [formData, setFormData] = useState(initialState);
@@ -33,8 +35,6 @@ function Registration() {
   };
 
   const officeLocArr = ["Noida", "WTC", "Jayanagar"];
-  const departmentArr = ["FE", "BE", "QA", "DevOps", "HR", "Operation", "IT"];
-
   const Validate = (values) => {
     let validationStatus = true;
     const errors = {};

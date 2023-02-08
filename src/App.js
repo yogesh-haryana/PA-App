@@ -8,6 +8,7 @@ import LoginForm from "./components/LoginForm";
 import Admin from "./components/Admin";
 import Dashboard from "./components/Dashboard";
 import AdminLogin from "./components/AdminLogin";
+// import BasicSelect from "./components/AppraisalForm";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           />
         </Routes>
       </Router>
+      {/* <BasicSelect /> */}
     </div>
 
   );

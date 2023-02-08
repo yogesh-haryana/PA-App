@@ -15,14 +15,15 @@ const initialErrs = {
   designation: ""
 };
 
+export const rolesArr = ["Management", "Manager", "Engineer"];
+export const desigArr = ["Project Lead", "Sr Software Engineer", "Software Engineer", "Software Trainee"];
+
 function Admin() {
   const classes = useStyles();
   const navigate = useNavigate();
   const [fetchedData, setFetchedData] = useState([]);
   const [selectData, setSelectData] = useState(initialState);
   const [formErrors, setFormErrors] = useState(initialErrs);
-  const rolesArr = ["Management", "Manager", "Engineer"];
-  const desigArr = ["Project Lead", "Sr Software Engineer", "Software Engineer", "Software Trainee"];
 
   const handler = (e) => {
     const { name, value } = e.target;

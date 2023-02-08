@@ -1,70 +1,60 @@
-import * as React from "react";
-import PropTypes from "prop-types";
-import Tabs from "@mui/material/Tabs";
+import { useState, useEffect } from "react";
+// import PropTypes from "prop-types";
 import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { TabPanel, TabList, TabContext } from "@mui/lab";
+import axios from "axios";
+import { departmentArr } from "./Registration";
+import TableListing from "./TableListing";
 
-function TabPanel(props) {
-  const {
-    children, value, index, ...other
-  } = props;
+function DepartmentTabs() {
+  // const { eventClicked } = props;
+  const [value, setValue] = useState("FE");
+  const [usersData, setUsersData] = useState();
+  const [isLoading, setIsLoding] = useState(false);
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired
-};
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`
+  const getDatabyDepartment = async () => {
+    const resp = await axios.get(`http://localhost:8080/api/users/verified/${value}`);
+    const { data } = resp;
+    setUsersData(data);
+    setIsLoding(false);
   };
-}
 
-export default function BasicTabs() {
-  const [value, setValue] = React.useState(0);
+  useEffect(() => {
+    setIsLoding(true);
+    getDatabyDepartment();
+  }, [value]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    console.log(newValue);
+    // setDeptLabel()
   };
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Item One" {...a11yProps(0)} />
-          <Tab label="Item Two" {...a11yProps(1)} />
-          <Tab label="Item Three" {...a11yProps(2)} />
-        </Tabs>
-      </Box>
-      <TabPanel value={value} index={0}>
-        Item One
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        Item Two
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        Item Three
-      </TabPanel>
+      <TabContext value={value}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <TabList onChange={handleChange} aria-label="basic tabs example">
+            {departmentArr.map((dept) => (
+              <Tab key={dept} label={dept} value={`${dept}`} />
+            ))}
+          </TabList>
+        </Box>
+        {departmentArr.map((dept) => (
+          <TabPanel key={dept} value={`${dept}`}><TableListing usersData={usersData} isLoading={isLoading} /></TabPanel>
+        ))}
+      </TabContext>
     </Box>
   );
 }
+
+// DepartmentTabs.propTypes = {
+//   eventClicked: PropTypes.string
+// };
+
+// DepartmentTabs.defaultProps = {
+//   eventClicked: "Employee List"
+// };
+
+export default DepartmentTabs;
