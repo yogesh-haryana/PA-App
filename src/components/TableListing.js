@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -11,11 +12,6 @@ import Paper from "@mui/material/Paper";
 import PropTypes from "prop-types";
 import { PropagateLoader } from "react-spinners";
 import BasicModal from "./UpdateModal";
-
-// const initialState = {
-//   role: "",
-//   designation: ""
-// };
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -41,9 +37,11 @@ function TableListing(props) {
   const { usersData, isLoading } = props;
   //   const [selectvalue, setSelectValue] = useState(initialState);
   const [modalState, setModalState] = useState(false);
+  const [userInfo, setUserInfo] = useState();
 
-  const openModel = () => {
+  const openModel = (detail) => {
     setModalState(true);
+    setUserInfo(detail);
   };
 
   return (
@@ -76,13 +74,19 @@ function TableListing(props) {
                   { user.designation ? user.designation : "N/A" }
                 </StyledTableCell>
                 <StyledTableCell>
-                  <BorderColorIcon sx={{ cursor: "pointer" }} type="button" onClick={openModel} />
-                  <BasicModal modalState={modalState} setModalState={setModalState} />
+                  <BorderColorIcon sx={{ cursor: "pointer" }} type="button" onClick={() => openModel(user)} />
                 </StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
         </Table>
+      )}
+      { modalState && (
+        <BasicModal
+          userInfo={userInfo}
+          modalState={modalState}
+          setModalState={setModalState}
+        />
       )}
     </TableContainer>
   );

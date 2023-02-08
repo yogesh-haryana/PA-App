@@ -23,11 +23,11 @@ function DepartmentTabs() {
   useEffect(() => {
     setIsLoding(true);
     getDatabyDepartment();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    console.log(newValue);
     // setDeptLabel()
   };
 

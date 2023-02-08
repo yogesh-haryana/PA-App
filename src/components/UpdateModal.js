@@ -1,9 +1,13 @@
-import * as React from "react";
+/* eslint-disable no-underscore-dangle */
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import PropTypes from "prop-types";
-import { Button } from "@mui/material";
+import {
+  InputLabel, Button, Select, MenuItem
+} from "@mui/material";
+import axios from "axios";
+import { rolesArr, desigArr } from "./Admin";
 
 const style = {
   position: "absolute",
@@ -18,8 +22,23 @@ const style = {
 };
 
 export default function BasicModal(props) {
-  const { modalState, setModalState } = props;
+  const { modalState, setModalState, userInfo } = props;
+  const initialState = {
+    role: userInfo.role,
+    designation: userInfo.designation
+  };
+  const [selectData, setSelectData] = useState(initialState);
+
   const handleClose = () => setModalState(false);
+
+  const handler = (e) => {
+    const { name, value } = e.target;
+    setSelectData({ ...selectData, [name]: value });
+  };
+
+  const updateRoleAndDesig = async () => {
+    await axios.put(`http://localhost:8080/api/users/verified/1/${userInfo._id}`, selectData);
+  };
 
   return (
     <div>
@@ -30,13 +49,35 @@ export default function BasicModal(props) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
+          <InputLabel id="helper-label">Role - </InputLabel>
+          <Select
+            name="role"
+            value={selectData.role}
+            label="role"
+            onChange={handler}
+          >
+            {rolesArr.map((elem) => (
+              <MenuItem key={elem} value={elem}>{elem}</MenuItem>
+            ))}
+          </Select>
+          <br />
+          {selectData.role === "Engineer" && (
+            <>
+              <InputLabel id="helper-label">Role - </InputLabel>
+              <Select
+                name="designation"
+                value={selectData.designation}
+                label="designation"
+                onChange={handler}
+              >
+                {desigArr.map((elem) => (
+                  <MenuItem key={elem} value={elem}>{elem}</MenuItem>
+                ))}
+              </Select>
+            </>
+          )}
           <Button variant="filled" onClick={handleClose}>Close Modal</Button>
+          <Button variant="contained" color="success" onClick={updateRoleAndDesig}>Update</Button>
         </Box>
       </Modal>
     </div>
@@ -45,5 +86,7 @@ export default function BasicModal(props) {
 
 BasicModal.propTypes = {
   modalState: PropTypes.bool.isRequired,
-  setModalState: PropTypes.func.isRequired
+  setModalState: PropTypes.func.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  userInfo: PropTypes.object.isRequired
 };
