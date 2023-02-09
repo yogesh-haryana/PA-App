@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { TabPanel, TabList, TabContext } from "@mui/lab";
 import axios from "axios";
 import { departmentArr } from "./Registration";
 import TableListing from "./TableListing";
+import AccordionListings from "./AccordianListing";
 
-function DepartmentTabs() {
-  // const { eventClicked } = props;
+function DepartmentTabs(props) {
+  const { eventClicked } = props;
   const [value, setValue] = useState("FE");
   const [usersData, setUsersData] = useState();
   const [isLoading, setIsLoding] = useState(false);
@@ -28,7 +29,6 @@ function DepartmentTabs() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    // setDeptLabel()
   };
 
   return (
@@ -42,19 +42,22 @@ function DepartmentTabs() {
           </TabList>
         </Box>
         {departmentArr.map((dept) => (
-          <TabPanel key={dept} value={`${dept}`}><TableListing usersData={usersData} isLoading={isLoading} /></TabPanel>
+          <TabPanel key={dept} value={`${dept}`}>
+            {eventClicked === "Employee List" && (<TableListing usersData={usersData} isLoading={isLoading} />)}
+            {eventClicked === "KRA List" && (<AccordionListings dept={value} />)}
+          </TabPanel>
         ))}
       </TabContext>
     </Box>
   );
 }
 
-// DepartmentTabs.propTypes = {
-//   eventClicked: PropTypes.string
-// };
+DepartmentTabs.propTypes = {
+  eventClicked: PropTypes.string
+};
 
-// DepartmentTabs.defaultProps = {
-//   eventClicked: "Employee List"
-// };
+DepartmentTabs.defaultProps = {
+  eventClicked: "Employee List"
+};
 
 export default DepartmentTabs;
