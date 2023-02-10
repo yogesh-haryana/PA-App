@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import PropTypes from "prop-types";
 import {
-  InputLabel, Button, Select, MenuItem
+  InputLabel, Button, Select, MenuItem, FormHelperText
 } from "@mui/material";
 import axios from "axios";
 import { rolesArr, desigArr } from "./Admin";
@@ -21,15 +21,43 @@ const style = {
   p: 4
 };
 
+const initialErrs = {
+  role: "",
+  designation: ""
+};
+
 export default function BasicModal(props) {
   const { modalState, setModalState, userInfo } = props;
   const initialState = {
     role: userInfo.role,
     designation: userInfo.designation
   };
+
   const [selectData, setSelectData] = useState(initialState);
+  const [formErrors, setFormErrors] = useState(initialErrs);
 
   const handleClose = () => setModalState(false);
+
+  const Validate = (values) => {
+    const errors = {};
+    let validationStatus = true;
+    switch (true) {
+    case (values.role === ""):
+      errors.role = "Role is required";
+      validationStatus = false;
+      break;
+
+    case (values.role === "Engineer" && values.designation === ""):
+      errors.designation = "Designation is required for engineers";
+      validationStatus = false;
+      break;
+
+    default:
+      break;
+    }
+    setFormErrors(errors);
+    return validationStatus;
+  };
 
   const handler = (e) => {
     const { name, value } = e.target;
@@ -37,7 +65,26 @@ export default function BasicModal(props) {
   };
 
   const updateRoleAndDesig = async () => {
-    await axios.put(`http://localhost:8080/api/users/verified/1/${userInfo._id}`, selectData);
+    let dataToUpdate = {};
+    if (selectData.role === "Management" || selectData.role === "Manager") {
+      dataToUpdate = {
+        role: selectData.role,
+        designation: ""
+      };
+    } else {
+      dataToUpdate = selectData;
+    }
+    console.log(dataToUpdate);
+    const resp = await axios.put(`http://localhost:8080/api/users/verified/1/${userInfo._id}`, dataToUpdate);
+    return resp;
+  };
+
+  const onFormSubmit = (e) => {
+    e.preventDefault();
+    if (Validate(selectData) === true) {
+      updateRoleAndDesig();
+      setModalState(false);
+    }
   };
 
   return (
@@ -49,35 +96,41 @@ export default function BasicModal(props) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <InputLabel id="helper-label">Role - </InputLabel>
-          <Select
-            name="role"
-            value={selectData.role}
-            label="role"
-            onChange={handler}
-          >
-            {rolesArr.map((elem) => (
-              <MenuItem key={elem} value={elem}>{elem}</MenuItem>
-            ))}
-          </Select>
-          <br />
-          {selectData.role === "Engineer" && (
-            <>
-              <InputLabel id="helper-label">Role - </InputLabel>
-              <Select
-                name="designation"
-                value={selectData.designation}
-                label="designation"
-                onChange={handler}
-              >
-                {desigArr.map((elem) => (
-                  <MenuItem key={elem} value={elem}>{elem}</MenuItem>
-                ))}
-              </Select>
-            </>
-          )}
-          <Button variant="filled" onClick={handleClose}>Close Modal</Button>
-          <Button variant="contained" color="success" onClick={updateRoleAndDesig}>Update</Button>
+          <form onSubmit={(e) => onFormSubmit(e)}>
+            <InputLabel id="helper-label">Role - </InputLabel>
+            <Select
+              name="role"
+              value={selectData.role}
+              label="role"
+              onChange={handler}
+            >
+              {rolesArr.map((elem) => (
+                <MenuItem key={elem} value={elem}>{elem}</MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>{formErrors.role}</FormHelperText>
+
+            <br />
+            {selectData.role === "Engineer" && (
+              <>
+                <InputLabel id="helper-label">Role - </InputLabel>
+                <Select
+                  name="designation"
+                  value={selectData.designation}
+                  label="designation"
+                  onChange={handler}
+                >
+                  {desigArr.map((elem) => (
+                    <MenuItem key={elem} value={elem}>{elem}</MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>{formErrors.designation}</FormHelperText>
+
+              </>
+            )}
+            <Button variant="filled" onClick={handleClose}>Close Modal</Button>
+            <Button type="submit" variant="contained" color="success">Update</Button>
+          </form>
         </Box>
       </Modal>
     </div>
