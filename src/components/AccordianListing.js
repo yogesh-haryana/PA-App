@@ -110,7 +110,7 @@ export default function AccordianListing(props) {
         <NewKRAForm
           isModalOpen={isModalOpen}
           setModalOpen={setModalOpen}
-          kraToEdit={editMode && kraToEdit}
+          kraToEdit={editMode ? kraToEdit : {}}
           btnName={editMode ? "update" : "save"}
           editMode={editMode}
           setEditMode={setEditMode}

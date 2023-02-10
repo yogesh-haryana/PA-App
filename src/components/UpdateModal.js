@@ -74,7 +74,6 @@ export default function BasicModal(props) {
     } else {
       dataToUpdate = selectData;
     }
-    console.log(dataToUpdate);
     const resp = await axios.put(`http://localhost:8080/api/users/verified/1/${userInfo._id}`, dataToUpdate);
     return resp;
   };

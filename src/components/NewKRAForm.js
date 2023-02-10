@@ -3,7 +3,6 @@ import { Button, Paper } from "@mui/material";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import PropTypes from "prop-types";
-import axios from "axios";
 import InputComponent from "../helpers/InputComponent";
 import SelectComp from "../helpers/SelectComp";
 import { desigArr } from "./Admin";
@@ -40,13 +39,14 @@ function NewKRAForm(props) {
     KraDescription: "",
     weightage: ""
   };
+
   const existKra = {
     designation: kraToEdit.designation,
     KraName: kraToEdit.KraName,
     KraDescription: kraToEdit.KraDescription,
     weightage: kraToEdit.weightage
   };
-  const [formValues, setFormValues] = useState(kraToEdit ? existKra : initValues);
+  const [formValues, setFormValues] = useState(existKra || initValues);
   const [formErrors, setFormErrors] = useState(initErrs);
   const [response, setResponse] = useState();
   // eslint-disable-next-line no-underscore-dangle
@@ -69,15 +69,19 @@ function NewKRAForm(props) {
   };
 
   const updateExistingKRA = async () => {
-    const resp = await axios.patch(`http://localhost:8080/api/kra/update/${id}`, JSON.stringify(formValues));
-    setResponse(resp);
+    const valuesToUpdt = formValues;
+    let resp = await request(`http://localhost:8080/api/kra/update/${id}`, "PATCH", valuesToUpdt);
+    resp = await resp.json();
+    console.log(resp);
   };
 
   const postNewKRA = async () => {
     const url = "http://localhost:8080/api/kra/";
     const method = "POST";
-    const resp = await request(url, method, formValues);
-    setResponse(resp);
+    let resp = await request(url, method, formValues);
+    resp = await resp.json();
+    // response message will show here resp.status
+    console.log(resp);
   };
 
   const Validate = (values) => {
@@ -138,7 +142,7 @@ function NewKRAForm(props) {
             <br />
             <InputComponent name="KraName" label="KRA Name" handler={handler} value={formValues.KraName} formErrors={formErrors.KraName} type="text" />
             <br />
-            <InputComponent name="KraDescription" label="KRA Description" handler={handler} value={formValues.KraDescription} formErrors={formErrors.KraDescription} type="textArea" />
+            <InputComponent name="KraDescription" label="KRA Description" handler={handler} value={formValues.KraDescription} formErrors={formErrors.KraDescription} type="text" />
             <br />
             <InputComponent name="weightage" label="KRA weightage" handler={handler} value={formValues.weightage} formErrors={formErrors.weightage} type="number" />
             <br />
@@ -162,7 +166,7 @@ NewKRAForm.propTypes = {
 };
 
 NewKRAForm.defaultProps = {
-  kraToEdit: {}
+  kraToEdit: ""
 };
 
 export default NewKRAForm;
