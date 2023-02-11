@@ -14,8 +14,16 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import PropTypes from "prop-types";
 import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogTitle from "@mui/material/DialogTitle";
+import { ToastContainer, toast } from "react-toastify";
+import KRAForm from "./KRAForm";
 import { desigArr } from "./Admin";
-import NewKRAForm from "./NewKRAForm";
+import { deleteKRA as deleteMyKRA, deleteAgree, deleteOpen } from "../Redux/actions";
+import request from "../helpers/httpHelper";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function AccordianListing(props) {
   const { dept } = props;
@@ -25,8 +33,14 @@ export default function AccordianListing(props) {
   const [editMode, setEditMode] = useState(false);
   const [KRAs, setKRAs] = useState();
   const [kraToEdit, setKraToEdit] = useState();
+  const dispatch = useDispatch();
+  const {
+    dltKRAID, dltOpen, dltAgree, kraToUpdt, newKRA, kraUpdtID
+  } = useSelector((state) => state.handingKRAs);
   const qryStringArr = openedAccordian.split(" ");
   const qryString = qryStringArr.join("%20");
+  const notifySuccess = (msg) => toast.success(msg);
+  const notifyFailed = (msg) => toast.error(msg);
 
   const handleChange = (panel, desig) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -53,9 +67,60 @@ export default function AccordianListing(props) {
     setModalOpen(true);
   };
 
-  const deleteKRA = async (id) => {
-    await axios.delete(`http://localhost:8080/api/kra/${id}`);
+  const deleteButtonClicked = (myid) => {
+    dispatch(deleteOpen(true));
+    dispatch(deleteMyKRA(myid));
   };
+
+  const deleteKRA = async () => {
+    if (dltKRAID) {
+      if (dltAgree) {
+        await axios.delete(`http://localhost:8080/api/kra/${dltKRAID}`);
+      }
+    }
+    dispatch(deleteOpen(false));
+  };
+
+  useEffect(() => {
+    deleteKRA();
+  }, [dltAgree]);
+
+  // update and post new Kras from KRA Form component
+
+  const updateExistingKRA = async () => {
+    if (kraUpdtID) {
+      let resp = await request(`http://localhost:8080/api/kra/update/${kraUpdtID}`, "PATCH", kraToUpdt);
+      resp = await resp.json();
+      if (resp.status === 200) {
+        notifySuccess(resp.response);
+      } else if (resp.status === 422) {
+        notifyFailed(resp.response);
+      }
+    }
+  };
+
+  const postNewKRA = async () => {
+    if (newKRA.weightage) {
+      const url = "http://localhost:8080/api/kra/";
+      const method = "POST";
+      let resp = await request(url, method, newKRA);
+      resp = await resp.json();
+      // response message will show here resp.status
+      if (resp.status === 200) {
+        notifySuccess(resp.response);
+      } else if (resp.status === 422) {
+        notifyFailed(resp.response);
+      }
+    }
+  };
+
+  useEffect(() => {
+    updateExistingKRA();
+  }, [kraUpdtID]);
+
+  useEffect(() => {
+    postNewKRA();
+  }, [newKRA]);
 
   return (
     <Box sx={{ position: "relative", height: "100%", width: "100%" }}>
@@ -85,7 +150,7 @@ export default function AccordianListing(props) {
                         <IconButton edge="start" aria-label="edit" onClick={() => handleEdit(kra)}>
                           <ModeEditIcon />
                         </IconButton>
-                        <IconButton edge="end" aria-label="delete" onClick={() => deleteKRA(kra._id)}>
+                        <IconButton edge="end" aria-label="delete" onClick={() => deleteButtonClicked(kra._id)}>
                           <DeleteIcon />
                         </IconButton>
                       </>
@@ -107,7 +172,7 @@ export default function AccordianListing(props) {
       </Box>
       <Button onClick={addNewKRA} sx={{ position: "absolute", top: "0", right: "0" }} type="button" variant="contained">New KRA</Button>
       {isModalOpen && (
-        <NewKRAForm
+        <KRAForm
           isModalOpen={isModalOpen}
           setModalOpen={setModalOpen}
           kraToEdit={editMode ? kraToEdit : {}}
@@ -116,6 +181,36 @@ export default function AccordianListing(props) {
           setEditMode={setEditMode}
         />
       )}
+      {dltOpen && (
+        <Dialog
+          open={dltOpen}
+          onClose={() => dispatch(deleteOpen(false))}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            Are you sure to delete ?
+          </DialogTitle>
+          <DialogActions>
+            <Button onClick={() => dispatch(deleteOpen(false))}>Disagree</Button>
+            <Button onClick={() => dispatch(deleteAgree(true))} autoFocus>
+              Agree
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </Box>
   );
 }

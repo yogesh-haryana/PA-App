@@ -1,5 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 import {
-  LOADING, LOGIN_SUCCESS, LOGIN_FAILED
+  LOADING, LOGIN_SUCCESS, LOGIN_FAILED, DLT_KRA, DLT_OPEN, DLT_AGREE, UPDT_KRA, POST_NEW_KRA
 } from "./constants";
 
 const myState = {
@@ -9,7 +10,7 @@ const myState = {
 };
 
 // eslint-disable-next-line default-param-last
-const authentication = (state = myState, action) => {
+export const authentication = (state = myState, action) => {
   switch (action.type) {
   case LOADING:
     return {
@@ -37,4 +38,52 @@ const authentication = (state = myState, action) => {
   }
 };
 
-export default authentication;
+const kraStates = {
+  dltKRAID: "",
+  dltOpen: false,
+  dltAgree: false,
+  kraToUpdt: {},
+  kraUpdtID: "",
+  newKRA: {}
+};
+
+// eslint-disable-next-line default-param-last
+export const handingKRAs = (state = kraStates, action) => {
+  switch (action.type) {
+  case DLT_KRA:
+    return {
+      ...state,
+      dltKRAID: action.payload
+
+    };
+
+  case DLT_OPEN:
+    return {
+      ...state,
+      dltOpen: action.payload
+
+    };
+  case DLT_AGREE:
+    return {
+      ...state,
+      dltAgree: action.payload
+
+    };
+
+  case UPDT_KRA:
+    return {
+      ...state,
+      kraToUpdt: action.payload,
+      kraUpdtID: (action.payload).id
+    };
+
+  case POST_NEW_KRA:
+    return {
+      ...state,
+      newKRA: action.payload
+    };
+
+  default:
+    return state;
+  }
+};

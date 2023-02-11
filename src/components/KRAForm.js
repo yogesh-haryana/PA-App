@@ -3,10 +3,11 @@ import { Button, Paper } from "@mui/material";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import PropTypes from "prop-types";
+import { useDispatch } from "react-redux";
 import InputComponent from "../helpers/InputComponent";
 import SelectComp from "../helpers/SelectComp";
 import { desigArr } from "./Admin";
-import request from "../helpers/httpHelper";
+import { updtKRA, newKRA } from "../Redux/actions";
 
 const style = {
   position: "absolute",
@@ -27,7 +28,7 @@ const initErrs = {
   weightage: ""
 };
 
-function NewKRAForm(props) {
+function KRAForm(props) {
   const {
     isModalOpen, setModalOpen, kraToEdit, btnName,
     editMode, setEditMode
@@ -41,6 +42,8 @@ function NewKRAForm(props) {
   };
 
   const existKra = {
+    // eslint-disable-next-line no-underscore-dangle
+    id: kraToEdit._id,
     designation: kraToEdit.designation,
     KraName: kraToEdit.KraName,
     KraDescription: kraToEdit.KraDescription,
@@ -48,9 +51,7 @@ function NewKRAForm(props) {
   };
   const [formValues, setFormValues] = useState(existKra || initValues);
   const [formErrors, setFormErrors] = useState(initErrs);
-  const [response, setResponse] = useState();
-  // eslint-disable-next-line no-underscore-dangle
-  const id = kraToEdit._id;
+  const dispatch = useDispatch();
 
   const handleClose = () => {
     setModalOpen(false);
@@ -66,22 +67,6 @@ function NewKRAForm(props) {
     setFormValues(initValues);
     setModalOpen(false);
     setEditMode(false);
-  };
-
-  const updateExistingKRA = async () => {
-    const valuesToUpdt = formValues;
-    let resp = await request(`http://localhost:8080/api/kra/update/${id}`, "PATCH", valuesToUpdt);
-    resp = await resp.json();
-    console.log(resp);
-  };
-
-  const postNewKRA = async () => {
-    const url = "http://localhost:8080/api/kra/";
-    const method = "POST";
-    let resp = await request(url, method, formValues);
-    resp = await resp.json();
-    // response message will show here resp.status
-    console.log(resp);
   };
 
   const Validate = (values) => {
@@ -118,10 +103,10 @@ function NewKRAForm(props) {
   const onFormSubmit = (e) => {
     e.preventDefault();
     if (Validate(formValues) === true) {
-      if (id && editMode) {
-        updateExistingKRA();
+      if (formValues.id && editMode) {
+        dispatch(updtKRA(formValues));
       } else {
-        postNewKRA();
+        dispatch(newKRA(formValues));
       }
       setModalOpen(false);
       setEditMode(false);
@@ -155,7 +140,7 @@ function NewKRAForm(props) {
   );
 }
 
-NewKRAForm.propTypes = {
+KRAForm.propTypes = {
   isModalOpen: PropTypes.bool.isRequired,
   setModalOpen: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
@@ -165,8 +150,8 @@ NewKRAForm.propTypes = {
   setEditMode: PropTypes.func.isRequired
 };
 
-NewKRAForm.defaultProps = {
+KRAForm.defaultProps = {
   kraToEdit: ""
 };
 
-export default NewKRAForm;
+export default KRAForm;
