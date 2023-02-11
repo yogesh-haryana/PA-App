@@ -8,6 +8,7 @@ import axios from "axios";
 import { departmentArr } from "./Registration";
 import TableListing from "./TableListing";
 import AccordionListings from "./AccordianListing";
+import GoalListings from "./GoalListings";
 
 function DepartmentTabs(props) {
   const { eventClicked } = props;
@@ -46,6 +47,7 @@ function DepartmentTabs(props) {
           <TabPanel key={dept} value={`${dept}`}>
             {eventClicked === "Employee List" && (<TableListing usersData={usersData} isLoading={isLoading} />)}
             {eventClicked === "KRA List" && (<AccordionListings dept={value} />)}
+            {eventClicked === "Goal List" && (<GoalListings dept={value} />)}
           </TabPanel>
         ))}
       </TabContext>
