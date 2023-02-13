@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
-import { authentication, handingKRAs } from "./reducers";
+import { authentication, handingKRAs, handlingGoals } from "./reducers";
 
 const rootReducers = combineReducers({
-  authentication, handingKRAs
+  authentication, handingKRAs, handlingGoals
 });
 
 export default rootReducers;

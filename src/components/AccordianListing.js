@@ -68,6 +68,7 @@ export default function AccordianListing(props) {
   };
 
   const deleteButtonClicked = (myid) => {
+    console.log(myid, "myid");
     dispatch(deleteOpen(true));
     dispatch(deleteMyKRA(myid));
   };
@@ -76,14 +77,16 @@ export default function AccordianListing(props) {
     if (dltKRAID) {
       if (dltAgree) {
         await axios.delete(`http://localhost:8080/api/kra/${dltKRAID}`);
+        dispatch(deleteOpen(false));
+        dispatch(deleteAgree(false));
+        getSpecificDesigKRAs();
       }
     }
-    dispatch(deleteOpen(false));
   };
 
   useEffect(() => {
     deleteKRA();
-  }, [dltAgree]);
+  }, [dltKRAID, dltAgree]);
 
   // update and post new Kras from KRA Form component
 
@@ -93,10 +96,12 @@ export default function AccordianListing(props) {
       resp = await resp.json();
       if (resp.status === 200) {
         notifySuccess(resp.response);
+        getSpecificDesigKRAs();
       } else if (resp.status === 422) {
         notifyFailed(resp.response);
       }
     }
+    getSpecificDesigKRAs();
   };
 
   const postNewKRA = async () => {
@@ -112,6 +117,7 @@ export default function AccordianListing(props) {
         notifyFailed(resp.response);
       }
     }
+    getSpecificDesigKRAs();
   };
 
   useEffect(() => {
@@ -142,7 +148,7 @@ export default function AccordianListing(props) {
             </AccordionSummary>
             <AccordionDetails>
               <List>
-                { KRAs && KRAs.map((kra, ind) => (
+                { KRAs?.map((kra, ind) => (
                   <ListItem
                     key={kra.KraName}
                     secondaryAction={(
@@ -201,7 +207,7 @@ export default function AccordianListing(props) {
       )}
       <ToastContainer
         position="top-center"
-        autoClose={5000}
+        autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useEffect, useState } from "react";
 import {
@@ -7,7 +8,10 @@ import Modal from "@mui/material/Modal";
 import FormLabel from "@mui/joy/FormLabel";
 import Textarea from "@mui/joy/Textarea";
 import axios from "axios";
+import PropTypes from "prop-types";
+import { useDispatch } from "react-redux";
 import { desigArr } from "./Admin";
+import { setEditMode } from "../Redux/actions";
 
 const style = {
   position: "absolute",
@@ -27,34 +31,32 @@ const initValues = {
   goalDescription: ""
 };
 
-// const existKra = {
-// // eslint-disable-next-line no-underscore-dangle
-// id: goal._id,
-// designation: kraToEdit.designation,
-// KraName: kraToEdit.KraName,
-// KraDescription: kraToEdit.KraDescription,
-// weightage: kraToEdit.weightage
-// };
+function GoalsForm(props) {
+  const {
+    setModalOpen, editMode, isModalOpen, goalToUpdate
+  } = props;
+  const [designation, setDesignation] = useState(goalToUpdate._id ? goalToUpdate.designation : "");
 
-function GoalsForm() {
-  const [designation, setDesignation] = useState("");
-  //   const [KraName, setKraName] = useState("");
-  //   const [goalName, setGoalName] = useState("");
-  //   const [goalDescription, setGoalDescription] = useState("");
-
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [formValues, setFormValues] = useState(initValues);
+  const existGoal = {
+    KraName: goalToUpdate.KraName,
+    goalName: goalToUpdate.goalName,
+    goalDescription: goalToUpdate.goalDescription
+  };
+  const [formValues, setFormValues] = useState(goalToUpdate._id ? existGoal : initValues);
   const [formErrors, setFormErrors] = useState(initValues);
   const [KraNamesArr, setKraNamesArr] = useState([]);
   const qryStringArr = designation?.split(" ");
   const qryString = qryStringArr?.join("%20");
+  const dispatch = useDispatch();
 
   const handleClose = () => {
     setModalOpen(false);
+    dispatch(setEditMode(false));
   };
 
   const handleCancel = () => {
     setModalOpen(false);
+    dispatch(setEditMode(false));
   };
 
   const getSpecificKraNamesArr = async () => {
@@ -125,7 +127,6 @@ function GoalsForm() {
 
   return (
     <div>
-      <Button onClick={() => setModalOpen(true)} variant="contained">Open</Button>
       <Modal
         open={isModalOpen}
         onClose={handleClose}
@@ -152,7 +153,7 @@ function GoalsForm() {
             {" "}
             <br />
             <div>
-              <InputLabel id="helper-label">Designation</InputLabel>
+              <InputLabel id="helper-label">KRA Name</InputLabel>
               <Select
                 sx={{ minWidth: "200px" }}
                 name="KraName"
@@ -193,5 +194,22 @@ function GoalsForm() {
     </div>
   );
 }
+
+GoalsForm.propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types
+  goalToUpdate: PropTypes.object,
+  editMode: PropTypes.bool.isRequired,
+  setModalOpen: PropTypes.func.isRequired,
+  isModalOpen: PropTypes.bool.isRequired
+};
+
+GoalsForm.defaultProps = {
+  goalToUpdate: {
+    designation: "",
+    KraName: "",
+    goalName: "",
+    goalDescription: ""
+  }
+};
 
 export default GoalsForm;

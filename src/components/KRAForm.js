@@ -1,11 +1,13 @@
+/* eslint-disable no-underscore-dangle */
 import { useState } from "react";
-import { Button, Paper } from "@mui/material";
-import Box from "@mui/material/Box";
+import {
+  Box, TextField, Button, Paper, Select, InputLabel, MenuItem, FormHelperText
+} from "@mui/material";
 import Modal from "@mui/material/Modal";
+import FormLabel from "@mui/joy/FormLabel";
+import Textarea from "@mui/joy/Textarea";
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
-import InputComponent from "../helpers/InputComponent";
-import SelectComp from "../helpers/SelectComp";
 import { desigArr } from "./Admin";
 import { updtKRA, newKRA } from "../Redux/actions";
 
@@ -73,7 +75,7 @@ function KRAForm(props) {
     const errors = {};
     let validationStatus = true;
     switch (true) {
-    case (values.designation === ""):
+    case (values.designation === "" || values.designation === undefined):
       errors.designation = "Designation is required";
       validationStatus = false;
       break;
@@ -101,6 +103,7 @@ function KRAForm(props) {
   };
 
   const onFormSubmit = (e) => {
+    console.log(formValues);
     e.preventDefault();
     if (Validate(formValues) === true) {
       if (formValues.id && editMode) {
@@ -123,13 +126,46 @@ function KRAForm(props) {
       >
         <Box component={Paper} sx={style}>
           <form onSubmit={(e) => onFormSubmit(e)}>
-            <SelectComp name="designation" label="Designation" handler={handler} options={desigArr} formErrors={formErrors.designation} value={formValues.designation} />
+            <InputLabel id="helper-label">Designation</InputLabel>
+            <Select
+              labelId="helper-label"
+              name="designation"
+              onChange={handler}
+              value={formValues.designation}
+              sx={{ minWidth: "200px" }}
+            >
+              <MenuItem value=""><em>None</em></MenuItem>
+              {desigArr.map((elem) => (
+                <MenuItem key={elem} value={elem}>{elem}</MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>{formErrors.designation}</FormHelperText>
             <br />
-            <InputComponent name="KraName" label="KRA Name" handler={handler} value={formValues.KraName} formErrors={formErrors.KraName} type="text" />
+            <FormLabel>KRA Name</FormLabel>
+            <TextField
+              sx={{ minWidth: "200px" }}
+              name="KraName"
+              onChange={handler}
+              value={formValues.KraName}
+              type="text"
+            />
+            <FormHelperText>{formErrors.KraName}</FormHelperText>
             <br />
-            <InputComponent name="KraDescription" label="KRA Description" handler={handler} value={formValues.KraDescription} formErrors={formErrors.KraDescription} type="text" />
+            <Box>
+              <FormLabel>KRA Description</FormLabel>
+              <Textarea name="KraDescription" value={formValues.KraDescription} onChange={handler} sx={{ maxWidth: "220px" }} maxRows={4} minRows={2} />
+              <FormHelperText>{formErrors.KraDescription}</FormHelperText>
+            </Box>
             <br />
-            <InputComponent name="weightage" label="KRA weightage" handler={handler} value={formValues.weightage} formErrors={formErrors.weightage} type="number" />
+            <FormLabel>KRA weightage</FormLabel>
+            <TextField
+              sx={{ minWidth: "200px" }}
+              name="weightage"
+              onChange={handler}
+              value={formValues.weightage}
+              type="number"
+            />
+            <FormHelperText>{formErrors.weightage}</FormHelperText>
             <br />
             <Button type="button" variant="filled" onClick={handleCancel}>Cancel</Button>
             <Button type="submit" variant="contained">{btnName}</Button>

@@ -1,5 +1,7 @@
 import {
-  LOADING, LOGIN_SUCCESS, LOGIN_FAILED, DLT_KRA, DLT_OPEN, DLT_AGREE, UPDT_KRA, POST_NEW_KRA
+  LOADING, LOGIN_SUCCESS, LOGIN_FAILED,
+  DLT_KRA, DLT_OPEN, DLT_AGREE, UPDT_KRA, POST_NEW_KRA,
+  DLT_GOAL, DLT_GOAL_CONFRM, UPDT_GOAL, DIALOG, SET_EDIT_MODE
 } from "./constants";
 
 export const loadingData = () => ({
@@ -38,5 +40,30 @@ export const updtKRA = (payload) => ({
 
 export const newKRA = (payload) => ({
   type: POST_NEW_KRA,
+  payload
+});
+
+export const dltGoal = (payload) => ({
+  type: DLT_GOAL,
+  payload
+});
+
+export const dltGoalConfrm = (payload) => ({
+  type: DLT_GOAL_CONFRM,
+  payload
+});
+
+export const updateGoal = (payload) => ({
+  type: UPDT_GOAL,
+  payload
+});
+
+export const goalDltDialoug = (payload) => ({
+  type: DIALOG,
+  payload
+});
+
+export const setEditMode = (payload) => ({
+  type: SET_EDIT_MODE,
   payload
 });

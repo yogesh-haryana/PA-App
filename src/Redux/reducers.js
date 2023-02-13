@@ -1,6 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 import {
-  LOADING, LOGIN_SUCCESS, LOGIN_FAILED, DLT_KRA, DLT_OPEN, DLT_AGREE, UPDT_KRA, POST_NEW_KRA
+  LOADING, LOGIN_SUCCESS,
+  LOGIN_FAILED, DLT_KRA, DLT_OPEN,
+  DLT_AGREE, UPDT_KRA, POST_NEW_KRA,
+  DLT_GOAL, DLT_GOAL_CONFRM, UPDT_GOAL, DIALOG, SET_EDIT_MODE
 } from "./constants";
 
 const myState = {
@@ -81,6 +84,52 @@ export const handingKRAs = (state = kraStates, action) => {
     return {
       ...state,
       newKRA: action.payload
+    };
+
+  default:
+    return state;
+  }
+};
+
+const goalState = {
+  goalDltId: "",
+  goalToUpdate: {},
+  goalDltConfrm: false,
+  dialougOpen: false,
+  editMode: false
+};
+
+// eslint-disable-next-line default-param-last
+export const handlingGoals = (state = goalState, action) => {
+  switch (action.type) {
+  case DLT_GOAL:
+    return {
+      ...state,
+      goalDltId: action.payload
+    };
+
+  case DLT_GOAL_CONFRM:
+    return {
+      ...state,
+      goalDltConfrm: action.payload
+    };
+
+  case UPDT_GOAL:
+    return {
+      ...state,
+      goalToUpdate: action.payload
+    };
+
+  case DIALOG:
+    return {
+      ...state,
+      dialougOpen: action.payload
+    };
+
+  case SET_EDIT_MODE:
+    return {
+      ...state,
+      editMode: action.payload
     };
 
   default:
