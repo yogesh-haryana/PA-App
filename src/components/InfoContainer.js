@@ -4,6 +4,7 @@ import AppraisalForm from "./AppraisalForm";
 import AppraisalRating from "./AppraisalRating";
 import DepartmentTabs from "./DepartmentTabs";
 import PerformanceReport from "./PerformanceReport";
+import Settings from "./Settings";
 
 function InfoContainer() {
   const queryString = window.location.search;
@@ -17,6 +18,7 @@ function InfoContainer() {
       {eventClicked === "Performance Report" && <PerformanceReport />}
       {eventClicked === "Appraisal Form" && <AppraisalForm />}
       {eventClicked === "Appraisal Rating" && <AppraisalRating />}
+      {eventClicked === "Settings" && <Settings />}
     </div>
   );
 }
