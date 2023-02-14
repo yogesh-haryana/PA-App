@@ -68,7 +68,6 @@ export default function AccordianListing(props) {
   };
 
   const deleteButtonClicked = (myid) => {
-    console.log(myid, "myid");
     dispatch(deleteOpen(true));
     dispatch(deleteMyKRA(myid));
   };

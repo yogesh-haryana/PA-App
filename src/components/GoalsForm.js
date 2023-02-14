@@ -6,12 +6,12 @@ import {
 } from "@mui/material";
 import Modal from "@mui/material/Modal";
 import FormLabel from "@mui/joy/FormLabel";
+import { useSelector, useDispatch } from "react-redux";
 import Textarea from "@mui/joy/Textarea";
 import axios from "axios";
-import PropTypes from "prop-types";
-import { useDispatch } from "react-redux";
+import { setGoalModal, updateGoal } from "../Redux/actions";
 import { desigArr } from "./Admin";
-import { setEditMode } from "../Redux/actions";
+import request from "../helpers/httpHelper";
 
 const style = {
   position: "absolute",
@@ -31,48 +31,47 @@ const initValues = {
   goalDescription: ""
 };
 
-function GoalsForm(props) {
-  const {
-    setModalOpen, editMode, isModalOpen, goalToUpdate
-  } = props;
-  const [designation, setDesignation] = useState(goalToUpdate._id ? goalToUpdate.designation : "");
+function GoalsForm() {
+  const { goalToUpdate, modalState } = useSelector((state) => state.handlingGoals);
 
   const existGoal = {
+    designation: goalToUpdate.designation,
     KraName: goalToUpdate.KraName,
     goalName: goalToUpdate.goalName,
     goalDescription: goalToUpdate.goalDescription
   };
+
   const [formValues, setFormValues] = useState(goalToUpdate._id ? existGoal : initValues);
   const [formErrors, setFormErrors] = useState(initValues);
   const [KraNamesArr, setKraNamesArr] = useState([]);
-  const qryStringArr = designation?.split(" ");
+  const qryStringArr = formValues.designation?.split(" ");
   const qryString = qryStringArr?.join("%20");
   const dispatch = useDispatch();
 
   const handleClose = () => {
-    setModalOpen(false);
-    dispatch(setEditMode(false));
+    dispatch(setGoalModal(false));
+    setFormValues(initValues);
+    dispatch(updateGoal(initValues));
   };
 
   const handleCancel = () => {
-    setModalOpen(false);
-    dispatch(setEditMode(false));
+    handleClose();
   };
 
   const getSpecificKraNamesArr = async () => {
+    const myArr = [];
     if (qryString) {
       const resp = await axios.get(`http://localhost:8080/api/kra/${qryString}`);
       const { data } = resp;
-      data.forEach((element) => {
-        setKraNamesArr([...KraNamesArr, element.KraName]);
-      });
+      data.forEach((element) => myArr.push(element.KraName));
     }
+    setKraNamesArr(myArr);
   };
 
   useEffect(() => {
     getSpecificKraNamesArr();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [designation]);
+  }, [formValues.designation]);
 
   const Validate = (values) => {
     const errors = {};
@@ -105,11 +104,6 @@ function GoalsForm(props) {
     return validationStatus;
   };
 
-  const selectDesignation = (e) => {
-    setKraNamesArr([]);
-    setDesignation(e.target.value);
-  };
-
   const handler = (e) => {
     setFormValues((prevState) => ({
       ...prevState,
@@ -117,18 +111,32 @@ function GoalsForm(props) {
     }));
   };
 
+  const updateGoalbyId = async () => {
+    await request(`http://localhost:8080/api/goals/update/${goalToUpdate._id}`, "PATCH", formValues);
+  };
+
+  const postNewGoal = async () => {
+    const url = "http://localhost:8080/api/goals/";
+    const method = "POST";
+    await request(url, method, formValues);
+  };
+
   const onFormSubmit = (e) => {
     e.preventDefault();
-    formValues.designation = designation;
     if (Validate(formValues)) {
-      console.log(formValues);
+      if (goalToUpdate?._id) {
+        updateGoalbyId();
+      } else {
+        postNewGoal();
+      }
     }
+    handleClose();
   };
 
   return (
     <div>
       <Modal
-        open={isModalOpen}
+        open={modalState}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
@@ -141,8 +149,8 @@ function GoalsForm(props) {
                 sx={{ minWidth: "200px" }}
                 name="designation"
                 labelId="helper-label"
-                value={designation}
-                onChange={(e) => selectDesignation(e)}
+                value={formValues.designation}
+                onChange={handler}
               >
                 {desigArr.map((elem) => (
                   <MenuItem key={elem} value={elem}>{elem}</MenuItem>
@@ -194,22 +202,5 @@ function GoalsForm(props) {
     </div>
   );
 }
-
-GoalsForm.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  goalToUpdate: PropTypes.object,
-  editMode: PropTypes.bool.isRequired,
-  setModalOpen: PropTypes.func.isRequired,
-  isModalOpen: PropTypes.bool.isRequired
-};
-
-GoalsForm.defaultProps = {
-  goalToUpdate: {
-    designation: "",
-    KraName: "",
-    goalName: "",
-    goalDescription: ""
-  }
-};
 
 export default GoalsForm;

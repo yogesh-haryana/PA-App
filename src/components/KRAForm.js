@@ -103,7 +103,6 @@ function KRAForm(props) {
   };
 
   const onFormSubmit = (e) => {
-    console.log(formValues);
     e.preventDefault();
     if (Validate(formValues) === true) {
       if (formValues.id && editMode) {

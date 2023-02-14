@@ -8,17 +8,18 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   AccordionDetails, Box, Button
 } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { desigArr } from "./Admin";
 import GoalsForm from "./GoalsForm";
 import NestedKraAccordian from "./NestedKraAccordian";
+import { setGoalModal } from "../Redux/actions";
 
 function AccordianForGoals(props) {
-  const [isModalOpen, setModalOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [openedAccordian, setOpenedAcc] = useState("");
   const { dept } = props;
-  const { goalToUpdate, editMode } = useSelector((state) => state.handlingGoals);
+  const dispatch = useDispatch();
+  const { modalState, goalToUpdate } = useSelector((state) => state.handlingGoals);
 
   const handleChange = (panel, desig) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -49,15 +50,10 @@ function AccordianForGoals(props) {
           </Accordion>
         ))}
       </Box>
-      <Button onClick={() => setModalOpen(true)} variant="contained">Open</Button>
-      {(isModalOpen || editMode)
+      <Button sx={{ position: "absolute", top: "0", right: "0" }} onClick={() => dispatch(setGoalModal(true))} variant="contained">Add New Goal</Button>
+      {modalState
        && (
-         <GoalsForm
-           editMode={editMode}
-           isModalOpen={isModalOpen}
-           setModalOpen={setModalOpen}
-           goalToUpdate={editMode && goalToUpdate}
-         />
+         <GoalsForm goalToUpdate={goalToUpdate} />
        )}
     </Box>
   );

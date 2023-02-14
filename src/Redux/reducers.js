@@ -3,7 +3,7 @@ import {
   LOADING, LOGIN_SUCCESS,
   LOGIN_FAILED, DLT_KRA, DLT_OPEN,
   DLT_AGREE, UPDT_KRA, POST_NEW_KRA,
-  DLT_GOAL, DLT_GOAL_CONFRM, UPDT_GOAL, DIALOG, SET_EDIT_MODE
+  DLT_GOAL, DLT_GOAL_CONFRM, UPDT_GOAL, DIALOG, SET_EDIT_MODE, SET_GOAL_MODAL
 } from "./constants";
 
 const myState = {
@@ -96,7 +96,8 @@ const goalState = {
   goalToUpdate: {},
   goalDltConfrm: false,
   dialougOpen: false,
-  editMode: false
+  editMode: false,
+  modalState: false
 };
 
 // eslint-disable-next-line default-param-last
@@ -130,6 +131,12 @@ export const handlingGoals = (state = goalState, action) => {
     return {
       ...state,
       editMode: action.payload
+    };
+
+  case SET_GOAL_MODAL:
+    return {
+      ...state,
+      modalState: action.payload
     };
 
   default:

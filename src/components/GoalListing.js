@@ -16,14 +16,12 @@ import {
   dltGoal, dltGoalConfrm,
   updateGoal,
   goalDltDialoug,
-  setEditMode
+  setGoalModal
 } from "../Redux/actions";
-// import GoalsForm from "./GoalsForm";
 
 function GoalListing(props) {
   const { openedAccordian } = props;
   const [goals, setGoals] = useState();
-  //   const [goalToEdit, setGoalToEdit] = useState();
   const qryStringArr = openedAccordian?.split(" ");
   const qryString = qryStringArr?.join("%20");
 
@@ -56,7 +54,7 @@ function GoalListing(props) {
       if (goalDltConfrm) {
         await axios.delete(`http://localhost:8080/api/goals/1/${goalDltId}`);
         dispatch(goalDltDialoug(false));
-        dispatch(goalDltConfrm(false));
+        dispatch(dltGoalConfrm(false));
         getGoalsByKraName();
       }
     }
@@ -69,7 +67,7 @@ function GoalListing(props) {
 
   const editButtonClicked = (goal) => {
     dispatch(updateGoal(goal));
-    dispatch(setEditMode(true));
+    dispatch(setGoalModal(true));
   };
 
   return (
