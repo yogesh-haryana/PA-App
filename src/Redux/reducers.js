@@ -42,7 +42,7 @@ export const authentication = (state = myState, action) => {
 };
 
 const kraStates = {
-  dltKRAID: "",
+  dltMyKRA: {},
   dltOpen: false,
   dltAgree: false,
   kraToUpdt: {},
@@ -56,7 +56,7 @@ export const handingKRAs = (state = kraStates, action) => {
   case DLT_KRA:
     return {
       ...state,
-      dltKRAID: action.payload
+      dltMyKRA: action.payload
 
     };
 

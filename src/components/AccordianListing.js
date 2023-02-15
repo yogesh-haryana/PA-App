@@ -25,6 +25,12 @@ import { deleteKRA as deleteMyKRA, deleteAgree, deleteOpen } from "../Redux/acti
 import request from "../helpers/httpHelper";
 import "react-toastify/dist/ReactToastify.css";
 
+export const makeStringQuery = (str) => {
+  const qryStringArr = str?.split(" ");
+  const qryString = qryStringArr?.join("%20");
+  return qryString;
+};
+
 export default function AccordianListing(props) {
   const { dept } = props;
   const [expanded, setExpanded] = useState(false);
@@ -35,10 +41,8 @@ export default function AccordianListing(props) {
   const [kraToEdit, setKraToEdit] = useState();
   const dispatch = useDispatch();
   const {
-    dltKRAID, dltOpen, dltAgree, kraToUpdt, newKRA, kraUpdtID
+    dltMyKRA, dltOpen, dltAgree, kraToUpdt, newKRA, kraUpdtID
   } = useSelector((state) => state.handingKRAs);
-  const qryStringArr = openedAccordian.split(" ");
-  const qryString = qryStringArr.join("%20");
   const notifySuccess = (msg) => toast.success(msg);
   const notifyFailed = (msg) => toast.error(msg);
 
@@ -48,14 +52,15 @@ export default function AccordianListing(props) {
   };
 
   const getSpecificDesigKRAs = async () => {
-    const resp = await axios.get(`http://localhost:8080/api/kra/${qryString}`);
+    const query = makeStringQuery(openedAccordian);
+    const resp = await axios.get(`http://localhost:8080/api/kra/${query}`);
     const { data } = resp;
     setKRAs(data);
   };
 
   useEffect(() => {
     getSpecificDesigKRAs();
-  }, [qryString]);
+  }, [openedAccordian]);
 
   const addNewKRA = () => {
     setModalOpen(true);
@@ -67,15 +72,18 @@ export default function AccordianListing(props) {
     setModalOpen(true);
   };
 
-  const deleteButtonClicked = (myid) => {
+  const deleteButtonClicked = (myKra) => {
     dispatch(deleteOpen(true));
-    dispatch(deleteMyKRA(myid));
+    dispatch(deleteMyKRA(myKra));
   };
 
   const deleteKRA = async () => {
-    if (dltKRAID) {
+    if (dltMyKRA) {
       if (dltAgree) {
-        await axios.delete(`http://localhost:8080/api/kra/${dltKRAID}`);
+        const desig = makeStringQuery(dltMyKRA.designation);
+        const name = makeStringQuery(dltMyKRA.KraName);
+        await axios.delete(`http://localhost:8080/api/kra/${dltMyKRA._id}`);
+        await axios.delete(`http://localhost:8080/api/goals/?designation=${desig}&KraName=${name}`);
         dispatch(deleteOpen(false));
         dispatch(deleteAgree(false));
         getSpecificDesigKRAs();
@@ -85,7 +93,7 @@ export default function AccordianListing(props) {
 
   useEffect(() => {
     deleteKRA();
-  }, [dltKRAID, dltAgree]);
+  }, [dltMyKRA._id, dltAgree]);
 
   // update and post new Kras from KRA Form component
 
@@ -125,7 +133,7 @@ export default function AccordianListing(props) {
 
   useEffect(() => {
     postNewKRA();
-  }, [newKRA]);
+  }, [newKRA.KraName]);
 
   return (
     <Box sx={{ position: "relative", height: "100%", width: "100%" }}>
@@ -155,7 +163,7 @@ export default function AccordianListing(props) {
                         <IconButton edge="start" aria-label="edit" onClick={() => handleEdit(kra)}>
                           <ModeEditIcon />
                         </IconButton>
-                        <IconButton edge="end" aria-label="delete" onClick={() => deleteButtonClicked(kra._id)}>
+                        <IconButton edge="end" aria-label="delete" onClick={() => deleteButtonClicked(kra)}>
                           <DeleteIcon />
                         </IconButton>
                       </>

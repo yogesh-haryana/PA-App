@@ -18,12 +18,11 @@ import {
   goalDltDialoug,
   setGoalModal
 } from "../Redux/actions";
+import { makeStringQuery } from "./AccordianListing";
 
 function GoalListing(props) {
-  const { openedAccordian } = props;
+  const { openedAccordian, desig } = props;
   const [goals, setGoals] = useState();
-  const qryStringArr = openedAccordian?.split(" ");
-  const qryString = qryStringArr?.join("%20");
 
   const dispatch = useDispatch();
   const {
@@ -33,8 +32,10 @@ function GoalListing(props) {
   } = useSelector((state) => state.handlingGoals);
 
   const getGoalsByKraName = async () => {
-    if (qryString) {
-      const resp = await axios.get(`http://localhost:8080/api/goals/${qryString}`);
+    if (openedAccordian && desig) {
+      const KraName = makeStringQuery(openedAccordian.trim());
+      const designation = makeStringQuery(desig);
+      const resp = await axios.get(`http://localhost:8080/api/goals/?designation=${designation}&KraName=${KraName}`);
       setGoals(resp.data);
     }
   };
@@ -42,7 +43,7 @@ function GoalListing(props) {
   useEffect(() => {
     getGoalsByKraName();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [qryString]);
+  }, [openedAccordian]);
 
   const deleteButtonClicked = (id) => {
     dispatch(dltGoal(id));
@@ -118,7 +119,8 @@ function GoalListing(props) {
 }
 
 GoalListing.propTypes = {
-  openedAccordian: PropTypes.string.isRequired
+  openedAccordian: PropTypes.string.isRequired,
+  desig: PropTypes.string.isRequired
 };
 
 export default GoalListing;

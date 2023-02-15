@@ -57,7 +57,7 @@ function NestedKraAccordian(props) {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            {openNested && <GoalListing openedAccordian={openNested} />}
+            {openNested && <GoalListing openedAccordian={openNested} desig={openedAccordian} />}
           </AccordionDetails>
         </Accordion>
       ))}
