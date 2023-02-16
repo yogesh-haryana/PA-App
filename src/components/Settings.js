@@ -7,6 +7,7 @@ import request from "../helpers/httpHelper";
 
 function Settings() {
   const [toggle, setToggle] = useState();
+  const [fy, setFy] = useState();
   const [toggleId, setToggleId] = useState("");
 
   const getSetting = async () => {
@@ -14,15 +15,19 @@ function Settings() {
     const { data } = resp;
     if (data.length === 1) {
       setToggle(data[0].toggle);
+      setFy(data[0].fy);
       setToggleId(data[0]._id);
     }
   };
 
   const updateSetting = async () => {
     if (toggleId) {
+      const d = new Date();
+      const year = d.getFullYear();
+      setFy(year);
       const url = `http://localhost:8080/api/settings/${toggleId}`;
       const method = "PUT";
-      const data = { toggle };
+      const data = { toggle, fy };
       await request(url, method, data);
     }
   };

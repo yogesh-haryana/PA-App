@@ -1,8 +1,9 @@
+/* eslint-disable default-param-last */
 /* eslint-disable no-underscore-dangle */
 import {
   LOADING, LOGIN_SUCCESS,
   LOGIN_FAILED, DLT_KRA, DLT_OPEN,
-  DLT_AGREE, UPDT_KRA, POST_NEW_KRA,
+  DLT_AGREE, UPDT_KRA, POST_NEW_KRA, SET_APPRAISAL,
   DLT_GOAL, DLT_GOAL_CONFRM, UPDT_GOAL, DIALOG, SET_EDIT_MODE, SET_GOAL_MODAL
 } from "./constants";
 
@@ -12,7 +13,6 @@ const myState = {
   error: ""
 };
 
-// eslint-disable-next-line default-param-last
 export const authentication = (state = myState, action) => {
   switch (action.type) {
   case LOADING:
@@ -50,7 +50,6 @@ const kraStates = {
   newKRA: {}
 };
 
-// eslint-disable-next-line default-param-last
 export const handingKRAs = (state = kraStates, action) => {
   switch (action.type) {
   case DLT_KRA:
@@ -100,7 +99,6 @@ const goalState = {
   modalState: false
 };
 
-// eslint-disable-next-line default-param-last
 export const handlingGoals = (state = goalState, action) => {
   switch (action.type) {
   case DLT_GOAL:
@@ -137,6 +135,23 @@ export const handlingGoals = (state = goalState, action) => {
     return {
       ...state,
       modalState: action.payload
+    };
+
+  default:
+    return state;
+  }
+};
+
+const appraisalState = {
+  appraisalStatus: {}
+};
+
+export const handleAppraisal = (state = appraisalState, action) => {
+  switch (action.type) {
+  case SET_APPRAISAL:
+    return {
+      ...state,
+      appraisalStatus: action.payload
     };
 
   default:

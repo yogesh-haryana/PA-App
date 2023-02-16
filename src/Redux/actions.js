@@ -1,6 +1,6 @@
 import {
   LOADING, LOGIN_SUCCESS, LOGIN_FAILED,
-  DLT_KRA, DLT_OPEN, DLT_AGREE, UPDT_KRA, POST_NEW_KRA,
+  DLT_KRA, DLT_OPEN, DLT_AGREE, UPDT_KRA, POST_NEW_KRA, SET_APPRAISAL,
   DLT_GOAL, DLT_GOAL_CONFRM, UPDT_GOAL, DIALOG, SET_EDIT_MODE, SET_GOAL_MODAL
 } from "./constants";
 
@@ -70,5 +70,10 @@ export const setEditMode = (payload) => ({
 
 export const setGoalModal = (payload) => ({
   type: SET_GOAL_MODAL,
+  payload
+});
+
+export const setAppraisalStatus = (payload) => ({
+  type: SET_APPRAISAL,
   payload
 });

@@ -12,3 +12,4 @@ export const DLT_GOAL_CONFRM = "DLT_GOAL_CONFRM";
 export const DIALOG = "DIALOG";
 export const SET_EDIT_MODE = "SET_EDIT_MODE";
 export const SET_GOAL_MODAL = "SET_GOAL_MODAL";
+export const SET_APPRAISAL = "SET_APPRAISAL";

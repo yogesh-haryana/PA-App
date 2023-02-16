@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setAppraisalStatus } from "../Redux/actions";
 import displaySectionStyles from "../Styles/displaySectionStyles";
 import InfoContainer from "./InfoContainer";
 import SideBarComp from "./SideBarComp";
@@ -13,17 +15,24 @@ function DisplaySection(props) {
   const menuItemsForManagerOn = ["Performance Report", "Appraisal Rating"];
   const menuItemsForEngineersOff = ["Performance Report"];
   const menuItemsForManagerOff = ["Performance Report"];
+  const dispatch = useDispatch();
 
   const getSetting = async () => {
     const resp = await axios.get("http://localhost:8080/api/settings");
     const { data } = resp;
+    const d = new Date();
+    const year = d.getFullYear();
     if (data.length === 1) {
-      setFormAvailable(data[0].toggle);
+      if (year === data[0].fy) {
+        setFormAvailable(data[0].toggle);
+        dispatch(setAppraisalStatus(data[0]));
+      }
     }
   };
 
   useEffect(() => {
     getSetting();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { user } = props;
@@ -34,7 +43,7 @@ function DisplaySection(props) {
       {role === "Management" && <SideBarComp menuItemsForSideBar={menuItemsForManagement} user={user} />}
       {role === "Manager" && <SideBarComp menuItemsForSideBar={isFormAvaliable ? menuItemsForManagerOn : menuItemsForManagerOff} user={user} />}
       {role === "Engineer" && <SideBarComp menuItemsForSideBar={isFormAvaliable ? menuItemsForEngineersOn : menuItemsForEngineersOff} user={user} />}
-      <InfoContainer />
+      <InfoContainer user={user} />
     </div>
   );
 }

@@ -16,20 +16,6 @@ function Dashboard() {
     localStorage.removeItem("user");
     navigate("/");
   };
-  //   const sessionExpireTime = 60 * 60 * 1000; // one Hour
-  // useEffect(() => {
-  //   localStorage.setItem("lastActiveTime", Date.now());
-  // }, [userData]);
-
-  //   useEffect(() => {
-  //     const lastActiveTime = localStorage.getItem("lastActiveTime");
-  //     if (lastActiveTime) {
-  //       const elapsedTime = Date.now() - lastActiveTime;
-  //       if (elapsedTime > sessionExpireTime) {
-  //         logOutUser();
-  //       }
-  //     }
-  //   });
 
   return (
     <>

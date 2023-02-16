@@ -31,7 +31,7 @@ function GoalListing(props) {
     dialougOpen
   } = useSelector((state) => state.handlingGoals);
 
-  const getGoalsByKraName = async () => {
+  const getGoalsByKraNameAndDesig = async () => {
     if (openedAccordian && desig) {
       const KraName = makeStringQuery(openedAccordian.trim());
       const designation = makeStringQuery(desig);
@@ -41,7 +41,7 @@ function GoalListing(props) {
   };
 
   useEffect(() => {
-    getGoalsByKraName();
+    getGoalsByKraNameAndDesig();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openedAccordian]);
 
@@ -56,7 +56,7 @@ function GoalListing(props) {
         await axios.delete(`http://localhost:8080/api/goals/1/${goalDltId}`);
         dispatch(goalDltDialoug(false));
         dispatch(dltGoalConfrm(false));
-        getGoalsByKraName();
+        getGoalsByKraNameAndDesig();
       }
     }
   };
