@@ -1,12 +1,14 @@
-import * as React from "react";
+/* eslint-disable no-underscore-dangle */
+import React, { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import PropTypes from "prop-types";
+import axios from "axios";
+import { makeStringQuery } from "./AccordianListing";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -29,29 +31,33 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function AppraisalTable(props) {
-  const { allGoals } = props;
+  const { kra, designation } = props;
+  const [allGoals, setAllGoals] = useState();
+
+  const getGoalsByKraNameAndDesig = async () => {
+    if (kra.KraName && designation) {
+      const KraName = makeStringQuery((kra.KraName).trim());
+      const desig = makeStringQuery(designation);
+      const resp = await axios.get(`http://localhost:8080/api/goals/?designation=${desig}&KraName=${KraName}`);
+      setAllGoals(resp.data);
+    }
+  };
+
+  useEffect(() => {
+    getGoalsByKraNameAndDesig();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kra.KraName]);
+
   return (
     <TableContainer>
       <Table aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Goal Name</StyledTableCell>
-            <StyledTableCell align="right">Self-Rating</StyledTableCell>
-            <StyledTableCell align="right">Comment(Self)</StyledTableCell>
-            <StyledTableCell align="right">Manager-Rating</StyledTableCell>
-            <StyledTableCell align="right">Comment(Manager)</StyledTableCell>
-          </TableRow>
-        </TableHead>
         <TableBody>
           {allGoals && allGoals.map((goal) => (
-            <StyledTableRow key={goal.name}>
+            <StyledTableRow key={goal._id}>
               <StyledTableCell component="th" scope="row">
                 {goal.goalName}
               </StyledTableCell>
               <StyledTableCell align="right">A</StyledTableCell>
-              <StyledTableCell align="right">B</StyledTableCell>
-              <StyledTableCell align="right">C</StyledTableCell>
-              <StyledTableCell align="right">D</StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>
@@ -62,5 +68,6 @@ export default function AppraisalTable(props) {
 
 AppraisalTable.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
-  allGoals: PropTypes.array.isRequired
+  kra: PropTypes.object.isRequired,
+  designation: PropTypes.string.isRequired
 };
