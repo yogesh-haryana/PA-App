@@ -42,9 +42,9 @@ const useStyles = makeStyles({
   },
   KraVsGoals: {
     display: "flex",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     "& div": {
-      width: "50%",
+      width: "30%",
       fontWeight: 700
     }
   }

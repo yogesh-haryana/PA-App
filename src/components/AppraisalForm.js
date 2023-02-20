@@ -8,14 +8,22 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { Button } from "@mui/material";
 import AFHeader from "./AFHeader";
 import AppraisalTable from "./AppraisalTable";
 import { makeStringQuery } from "./AccordianListing";
+import request from "../helpers/httpHelper";
 
 function AppraisalForm(props) {
+  const date = new Date();
+  const fy = date.getFullYear();
+  const [ratingValue, setRatingValue] = useState({});
+  const [userComment, setUserCommt] = useState({});
   const { user } = props;
   const [kraArr, setKraArr] = useState();
-  const { designation } = user;
+  const {
+    designation, fullName, empId, department
+  } = user;
 
   const getAllKRAsByDesigAndGoals = async () => {
     const qryString = makeStringQuery(designation);
@@ -31,34 +39,78 @@ function AppraisalForm(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [designation]);
 
+  const preparingData = () => {
+    const reviewData = {
+      name: fullName,
+      empId,
+      department,
+      designation,
+      fincYear: fy,
+      reviews: {
+        selfComments: userComment,
+        selfRatings: ratingValue,
+        mngrRatings: {},
+        mngrComments: {}
+      }
+    };
+    return reviewData;
+  };
+
+  const postDataToApi = async () => {
+    const data = preparingData();
+    const url = "http://localhost:8080/api/reviews";
+    const method = "POST";
+    await request(url, method, data);
+  };
+
+  const sumbitSelfApp = (e) => {
+    e.preventDefault();
+    postDataToApi();
+  };
+
   return (
     <div>
       <AFHeader user={user} />
-      <TableContainer>
-        {kraArr && kraArr.map((kra) => (
-          <Table aria-label="customized table">
-            <TableHead key={kra._id}>
-              <TableRow>
-                <TableCell sx={{ width: "20%", fontSize: "16px", fontWeight: 600 }}>
-                  Weightage -
-                  {" "}
-                  {kra.weightage}
-                  {" %"}
-                </TableCell>
-                <TableCell sx={{ width: "80%", fontSize: "16px", fontWeight: 600 }}>{kra.KraName}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell />
-                <TableCell>
-                  <AppraisalTable kra={kra} designation={designation} />
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        ))}
-      </TableContainer>
+      <form onSubmit={(e) => sumbitSelfApp(e)}>
+        <TableContainer>
+          {kraArr && kraArr.map((kra, indx) => (
+            <Table aria-label="customized table">
+              <TableHead key={kra._id}>
+                <TableRow>
+                  <TableCell sx={{ width: "20%", fontSize: "16px", fontWeight: 600 }}>
+                    Weightage -
+                    {" "}
+                    {kra.weightage}
+                    {" %"}
+                  </TableCell>
+                  <TableCell sx={{ width: "80%", fontSize: "16px", fontWeight: 600 }}>{kra.KraName}</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell />
+                  <TableCell>
+                    <AppraisalTable
+                      kra={kra}
+                      indx={indx}
+                      empId={empId}
+                      designation={designation}
+                      ratingValue={ratingValue}
+                      setRatingValue={setRatingValue}
+                      userComment={userComment}
+                      setUserCommt={setUserCommt}
+                    />
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          ))}
+        </TableContainer>
+        <div>
+          <Button type="submit" variant="contained">Submit</Button>
+          <Button type="reset" variant="outlined">Reset</Button>
+        </div>
+      </form>
     </div>
   );
 }

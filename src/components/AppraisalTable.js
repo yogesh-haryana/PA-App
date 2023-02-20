@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-underscore-dangle */
 import React, { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
@@ -8,6 +9,8 @@ import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
 import PropTypes from "prop-types";
 import axios from "axios";
+import Textarea from "@mui/joy/Textarea";
+import Rating from "@mui/material/Rating";
 import { makeStringQuery } from "./AccordianListing";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -31,8 +34,22 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function AppraisalTable(props) {
-  const { kra, designation } = props;
+  const {
+    kra, designation, indx, empId,
+    ratingValue, setRatingValue, userComment, setUserCommt
+  } = props;
   const [allGoals, setAllGoals] = useState();
+  const [formData, setFormData] = useState();
+
+  const checkIfFormFilled = async () => {
+    const response = await axios.get(`http://localhost:8080/api/reviews/${empId}`);
+    setFormData(response.data);
+  };
+
+  useEffect(() => {
+    checkIfFormFilled();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const getGoalsByKraNameAndDesig = async () => {
     if (kra.KraName && designation) {
@@ -48,16 +65,34 @@ export default function AppraisalTable(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kra.KraName]);
 
+  const ratingHandler = (e) => {
+    const { name, value } = e.target;
+    setRatingValue({ ...ratingValue, [name]: Number(value) });
+  };
+
+  const commentHandler = (e) => {
+    const { name, value } = e.target;
+    setUserCommt({ ...userComment, [name]: value });
+  };
+
   return (
     <TableContainer>
       <Table aria-label="customized table">
         <TableBody>
-          {allGoals && allGoals.map((goal) => (
+          {allGoals && allGoals.map((goal, idx) => (
             <StyledTableRow key={goal._id}>
               <StyledTableCell component="th" scope="row">
                 {goal.goalName}
               </StyledTableCell>
-              <StyledTableCell align="right">A</StyledTableCell>
+              <StyledTableCell align="right">
+                <Rating
+                  name={`ratingSelf${indx}-${idx}`}
+                  value={ratingValue[`ratingSelf${indx}-${idx}`]}
+                  onChange={(e) => ratingHandler(e)}
+                  precision={0.5}
+                />
+                <Textarea name={`goalComment${indx}-${idx}`} value={userComment[`goalComment${indx}-${idx}`]} onChange={(e) => commentHandler(e)} sx={{ maxWidth: "220px" }} maxRows={4} minRows={2} />
+              </StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>
@@ -67,7 +102,12 @@ export default function AppraisalTable(props) {
 }
 
 AppraisalTable.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
   kra: PropTypes.object.isRequired,
-  designation: PropTypes.string.isRequired
+  designation: PropTypes.string.isRequired,
+  empId: PropTypes.number.isRequired,
+  indx: PropTypes.number.isRequired,
+  ratingValue: PropTypes.object.isRequired,
+  userComment: PropTypes.object.isRequired,
+  setRatingValue: PropTypes.func.isRequired,
+  setUserCommt: PropTypes.func.isRequired
 };
